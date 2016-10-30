@@ -1,0 +1,36 @@
+---
+version: "2"
+services:
+  ircclient:
+    image: arbourd/shout
+    ports:
+    - "9000:9000"
+  ircserver:
+    image: cloudposse/unrealircd
+    ports:
+    - "6667:6667"
+  jenkins:
+    image: jenkins
+    ports:
+    - "8080:8080"
+  hubot:
+    image: hubot-jenkins-kube-irc
+    build: .
+    ports:
+    - "8082:8082"
+    # links:
+    # - jenkins
+    # - ircserver
+    environment:
+    - "HUBOT_PORT=8082"
+    # IRC
+    - "HUBOT_IRC_SERVER=ircserver"
+    - "HUBOT_IRC_PORT=6667"
+    - "HUBOT_IRC_ROOMS=#help"
+    - "HUBOT_IRC_NICK=hubot"
+    # Jenkins
+    - "HUBOT_JENKINS_URL=http://jenkins:8080"
+    - "HUBOT_JENKINS_USER=docker"
+    - "HUBOT_JENKINS_USER_API_KEY=0508288aa46ff51290c901061f2119a9"
+    # Kubernetes
+    - "KUBE_HOST=192.168.99.100"
